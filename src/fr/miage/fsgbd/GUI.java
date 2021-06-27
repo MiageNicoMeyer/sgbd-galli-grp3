@@ -4,9 +4,10 @@ import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.util.ArrayList;
+
+
 
 /**
  * @author Galli Gregory, Mopolo Moke Gabriel
@@ -14,8 +15,8 @@ import java.util.ArrayList;
 public class GUI extends JFrame implements ActionListener {
     TestInteger testInt = new TestInteger();
     BTreePlus<Integer> bInt;
-    private JButton buttonClean, buttonRemove, buttonLoad, buttonSave, buttonAddMany, buttonAddItem, buttonRefresh;
-    private JTextField txtNbreItem, txtNbreSpecificItem, txtU, txtFile, removeSpecific;
+    private JButton buttonClean, buttonRemove, buttonLoad, buttonSave, buttonAddMany, buttonAddItem, buttonRefresh, buttonSearchSeq, buttonSearchIndex;
+    private JTextField txtNbreItem, txtNbreSpecificItem, txtU, txtFile, removeSpecific, txtToSearch;
     private final JTree tree = new JTree();
 
     public GUI() {
@@ -24,9 +25,9 @@ public class GUI extends JFrame implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == buttonLoad || e.getSource() == buttonClean || e.getSource() == buttonSave || e.getSource() == buttonRefresh) {
+        if (e.getSource() == buttonLoad || e.getSource() == buttonClean || e.getSource() == buttonSave || e.getSource() == buttonRefresh || e.getSource()==buttonSearchIndex || e.getSource()==buttonSearchSeq) {
             if (e.getSource() == buttonLoad) {
-                BDeserializer<Integer> load = new BDeserializer<Integer>();
+                BDeserializer<Integer> load = new BDeserializer<>();
                 bInt = load.getArbre(txtFile.getText());
                 if (bInt == null)
                     System.out.println("Echec du chargement.");
@@ -37,9 +38,21 @@ public class GUI extends JFrame implements ActionListener {
                 else
                     bInt = new BTreePlus<Integer>(Integer.parseInt(txtU.getText()), testInt);
             } else if (e.getSource() == buttonSave) {
-                BSerializer<Integer> save = new BSerializer<Integer>(bInt, txtFile.getText());
-            }else if (e.getSource() == buttonRefresh) {
+                BSerializer<Integer> save = new BSerializer<>(bInt, txtFile.getText());
+            } else if (e.getSource() == buttonRefresh) {
                 tree.updateUI();
+            } else if (e.getSource() == buttonSearchIndex) {
+                long i = System.currentTimeMillis();
+                Personne p = bInt.searchIndex(Integer.parseInt(txtToSearch.getText()),bInt.getRacine());
+                i = System.currentTimeMillis()-i;
+                System.out.println("Personne trouvé  : "+p);
+                System.out.println("Temps d'execution : "+i+" milliseconde(s)");
+            } else if(e.getSource()==buttonSearchSeq){
+                long i = System.currentTimeMillis();
+                Personne p = bInt.searchSeq(Integer.parseInt(txtToSearch.getText()),bInt.getRacine());
+                i = System.currentTimeMillis()-i;
+                System.out.println("Personne trouvé  : "+p);
+                System.out.println("Temps d'execution : "+i+" milliseconde(s)");
             }
         } else {
             if (bInt == null)
@@ -71,7 +84,7 @@ public class GUI extends JFrame implements ActionListener {
                 );
 
             } else if (e.getSource() == buttonRemove) {
-                bInt.removeValeur(Integer.parseInt(removeSpecific.getText()));
+                bInt.removeValeur(Integer.parseInt(txtNbreSpecificItem.getText()));
             }
         }
 
@@ -168,6 +181,21 @@ public class GUI extends JFrame implements ActionListener {
         c.gridwidth = 1;
         pane1.add(removeSpecific, c);
 
+        // WIP
+        JLabel labelTxtToSearch = new JLabel("Rechercher:");
+        c.gridx = 0;
+        c.gridy = 8;
+        c.weightx = 1;
+        c.gridwidth = 1;
+        pane1.add(labelTxtToSearch, c);
+
+        txtToSearch = new JTextField("index", 7);
+        c.gridx = 1;
+        c.gridy = 8;
+        c.weightx = 1;
+        c.gridwidth = 1;
+        pane1.add(txtToSearch, c);
+
         buttonRemove = new JButton("Supprimer l'?l?ment n de l'arbre");
         c.gridx = 2;
         c.gridy = 4;
@@ -217,12 +245,28 @@ public class GUI extends JFrame implements ActionListener {
         c.gridwidth = 2;
         pane1.add(buttonRefresh, c);
 
+        // WIP
+        buttonSearchSeq = new JButton("Recherche Seq");
+        c.gridx = 2;
+        c.gridy = 8;
+        c.weightx = 0.5;
+        c.gridwidth = 1;
+        pane1.add(buttonSearchSeq, c);
+
+        // WIP
+        buttonSearchIndex = new JButton("Recherche Ind");
+        c.gridx = 3;
+        c.gridy = 8;
+        c.weightx = 0.5;
+        c.gridwidth = 1;
+        pane1.add(buttonSearchIndex, c);
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.ipady = 400;       //reset to default
         c.weighty = 1.0;   //request any extra vertical space
         c.gridwidth = 4;   //2 columns wide
         c.gridx = 0;
-        c.gridy = 8;
+        c.gridy = 9;
 
         JScrollPane scrollPane = new JScrollPane(tree);
         pane1.add(scrollPane, c);
@@ -238,6 +282,8 @@ public class GUI extends JFrame implements ActionListener {
         buttonRemove.addActionListener(this);
         buttonClean.addActionListener(this);
         buttonRefresh.addActionListener(this);
+        buttonSearchSeq.addActionListener(this);
+        buttonSearchIndex.addActionListener(this);
 
         return pane1;
     }

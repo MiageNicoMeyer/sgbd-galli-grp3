@@ -1,6 +1,9 @@
 package fr.miage.fsgbd;
 
-public interface Executable<T> extends java.io.Serializable
-{
-	public  boolean execute(T arg1, T arg2) ;	
+import java.io.Serializable;
+
+public interface Executable<T> extends Serializable {
+
+	boolean execute(T arg1, T arg2);
+	
 }
