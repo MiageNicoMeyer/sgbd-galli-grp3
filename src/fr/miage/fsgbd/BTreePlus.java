@@ -62,55 +62,40 @@ public class BTreePlus<Type> implements Serializable {
         }
     }
 
+    /* Algorithme de recherche par index
+     * Complexité : O(log(n))
+     */
     public Personne searchIndex(Type index,Noeud<Type> arbre) {
 
-        if(arbre.fils.size()==0) {
-            if(arbre.keys.contains(index)) {
-                for (Type key : arbre.keys) {
-                    if ((int) key == (int) index) {
-                        Personne result = cherchePersonne(arbre.p, index);
-                        if(result != null) return result;
-                    }
-                }
+        Personne result = null;
+        for(Noeud<Type> fils : arbre.fils) {
+            for(Type key : fils.keys) {
+                if((int) key == (int) index) result = cherchePersonne(fils.p, index);
             }
-            return null;
+            if(result == null) result = searchIndex(index, fils);
         }
-        else {
-            for (Noeud<Type> n : arbre.fils) {
-                Personne result = searchIndex(index, n);
-                if(result != null) return result;
-            }
-            return null;
-        }
+        return result;
     }
 
-    private Personne cherchePersonne(ArrayList<Personne> p, Type index) {
-        for(Personne pers : p){
-            if(pers.key==(int)index){
-                return pers;
+    /* Algorithme de recherche séquentielle
+     * Complexité : O(n)
+     */
+    public Personne searchSeq(Type index,Noeud<Type> arbre) {
+        Personne result = null;
+        for(Noeud<Type> fils : arbre.fils) {
+            for(Personne personne : fils.p) {
+                if(personne.key == (int) index) result = personne;
             }
+            if(result == null) result = searchSeq(index, fils);
+        }
+        return result;
+    }
+
+    private Personne cherchePersonne(ArrayList<Personne> personnes, Type index) {
+        for(Personne personne : personnes) {
+            if(personne.key == (int)index) return personne;
         }
         return null;
-    }
-
-
-    public Personne searchSeq(Type index,Noeud<Type> arbre) {
-
-        if(arbre.fils.size() != 0) {
-            for (Noeud<Type> n : arbre.fils) {
-                 Personne result = searchSeq(index, n);
-                 if(result != null) return result;
-            }
-            return null;
-        }
-        else{
-            if(arbre.keys.contains(index)) {
-                for(Personne p : arbre.p) {
-                    if(p.key == (int) index) return p;
-                }
-            }
-            return null;
-        }
     }
 
     public Noeud<Type> getRacine() {

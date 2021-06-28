@@ -17,6 +17,7 @@ public class GUI extends JFrame implements ActionListener {
     BTreePlus<Integer> bInt;
     private JButton buttonClean, buttonRemove, buttonLoad, buttonSave, buttonAddMany, buttonAddItem, buttonRefresh, buttonSearchSeq, buttonSearchIndex;
     private JTextField txtNbreItem, txtNbreSpecificItem, txtU, txtFile, removeSpecific, txtToSearch;
+    private JOptionPane popUpInfo;
     private final JTree tree = new JTree();
 
     public GUI() {
@@ -138,7 +139,6 @@ public class GUI extends JFrame implements ActionListener {
         c.weightx = 1;
         pane1.add(txtNbreItem, c);
 
-
         buttonAddMany = new JButton("Ajouter n ?l?ments al?atoires ? l'arbre");
         c.gridx = 2;
         c.gridy = 2;
@@ -181,7 +181,6 @@ public class GUI extends JFrame implements ActionListener {
         c.gridwidth = 1;
         pane1.add(removeSpecific, c);
 
-        // WIP
         JLabel labelTxtToSearch = new JLabel("Rechercher:");
         c.gridx = 0;
         c.gridy = 8;
