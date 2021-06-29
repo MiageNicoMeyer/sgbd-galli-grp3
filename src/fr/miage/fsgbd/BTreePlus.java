@@ -52,7 +52,6 @@ public class BTreePlus<Type> implements Serializable {
         return false;
     }
 
-
     public void removeValeur(Type valeur) {
         System.out.println("Retrait de la valeur : " + valeur.toString());
         if (racine.contient(valeur) != null) {
@@ -62,40 +61,78 @@ public class BTreePlus<Type> implements Serializable {
         }
     }
 
-    /* Algorithme de recherche par index
-     * Complexité : O(log(n))
+    /**
+     * Recherche par index - Algorithme de recherche dichotomique.
+     * @param id
+     * @param noeud
+     * @return le fils du noeud correspondant à l'identifiant.
      */
-    public Personne searchIndex(Type index,Noeud<Type> arbre) {
-
-        Personne result = null;
-        for(Noeud<Type> fils : arbre.fils) {
-            for(Type key : fils.keys) {
-                if((int) key == (int) index) result = cherchePersonne(fils.p, index);
+    private Noeud<Type> searchFils(Type id, Noeud<Type> noeud) {
+        if (noeud.fils != null) {
+            for (int i = 0; i < noeud.keys.size(); i++) {
+                if (i == 0 && (int) noeud.keys.get(0) > (int) id)
+                    return noeud.fils.get(0);
+                else if (i == noeud.keys.size() - 1 && (int) noeud.keys.get(noeud.keys.size() - 1) < (int) id)
+                    return noeud.fils.get(noeud.fils.size() - 1);
+                else if ((int) noeud.keys.get(i + 1) > (int) id && (int) noeud.keys.get(i) < (int) id)
+                    return noeud.fils.get(i + 1);
             }
-            if(result == null) result = searchIndex(index, fils);
-        }
-        return result;
-    }
-
-    /* Algorithme de recherche séquentielle
-     * Complexité : O(n)
-     */
-    public Personne searchSeq(Type index,Noeud<Type> arbre) {
-        Personne result = null;
-        for(Noeud<Type> fils : arbre.fils) {
-            for(Personne personne : fils.p) {
-                if(personne.key == (int) index) result = personne;
-            }
-            if(result == null) result = searchSeq(index, fils);
-        }
-        return result;
-    }
-
-    private Personne cherchePersonne(ArrayList<Personne> personnes, Type index) {
-        for(Personne personne : personnes) {
-            if(personne.key == (int)index) return personne;
         }
         return null;
+    }
+
+    /**
+     * Méthode générique de parcours d'un tableau de personnes.
+     * @param id
+     * @param personnes
+     * @return la personne recherchée.
+     */
+    private Personne searchPersonne(Type id, ArrayList<Personne> personnes) {
+        for(Personne personne : personnes) {
+            if(personne.cle == (int) id)
+                return personne;
+        }
+        return null;
+    }
+
+    /**
+     * Recherche par index
+     * @param id
+     * @param noeud
+     * @return Personne result ; La personne trouvée.
+     * Complexité : O(log(n))
+     */
+    public Personne searchIndex(Type id, Noeud<Type> noeud) {
+        Personne result;
+        if (noeud.keys.contains(id))
+            return searchPersonne(id, noeud.personnes);
+        else {
+            Noeud<Type> fils = searchFils(id, noeud);
+            result = searchIndex(id, fils);
+        }
+        return result;
+    }
+
+    /**
+     * Recherche séquentielle
+     * @param id
+     * @param noeud
+     * @return Personne result ; La personne trouvée.
+     * Complexité : O(n)
+     */
+    public Personne searchSeq(Type id, Noeud<Type> noeud) {
+        Personne result = new Personne();
+        if (noeud.keys.contains(id))
+            result = searchPersonne(id, noeud.personnes);
+        else if (noeud.fils.size() != 0) {
+            for (Noeud<Type> fils : noeud.fils) {
+                if (fils.keys.contains(id))
+                    result = searchPersonne(id, fils.personnes);
+                else
+                    result = searchSeq(id, fils);
+            }
+        }
+        return result;
     }
 
     public Noeud<Type> getRacine() {

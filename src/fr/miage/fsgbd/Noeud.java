@@ -15,8 +15,8 @@ public class Noeud<Type> implements Serializable {
     // Collection des Noeuds enfants du noeud courant
     public ArrayList<Noeud<Type>> fils = new ArrayList<Noeud<Type>>();
 
-    //donnee stocké
-    public ArrayList<Personne> p= new ArrayList<>();
+    // Les personnes contenues
+    public ArrayList<Personne> personnes = new ArrayList<>();
 
     // Collection des cl�s du noeud courant
     public ArrayList<Type> keys = new ArrayList<Type>();
@@ -28,8 +28,13 @@ public class Noeud<Type> implements Serializable {
     private Executable compar;
 
     // Ordre de l'abre (u = nombre de cl�s maximum = 2m)
-    private final int u, tailleMin;
+    public final int u, tailleMin;
 
+    //Constructeur vide
+    public Noeud(){
+        this.u = 4;
+        this.tailleMin = 2;
+    }
 
     /* Constructeur de la classe noeud, qui permet l'ajout et la recherche d'�l�ment dans les branches
      * @param u Nombre de cl�s maximum du noeud
@@ -126,16 +131,17 @@ public class Noeud<Type> implements Serializable {
 
     /**
      * Ins�re une clef dans le noeud courant
+     * Ajoute également une personne à chaque noeud courant
      * @param valeur � ajouter aux clefs du noeud courant
      */
     private void insert(Type valeur) {
         int i = 0;
-        Personne p = new Personne((int)valeur,"nom"+(int)valeur,"prenom"+(int)valeur);
+        Personne personne = new Personne((int) valeur,"non." + (int) valeur,"prenom." + (int) valeur);
         while ((this.keys.size() > i) && compare(this.keys.get(i), valeur)) {
             i++;
         }
         this.keys.add(i, valeur);
-        this.p.add(p);
+        this.personnes.add(personne);
     }
 
     /**

@@ -17,7 +17,6 @@ public class GUI extends JFrame implements ActionListener {
     BTreePlus<Integer> bInt;
     private JButton buttonClean, buttonRemove, buttonLoad, buttonSave, buttonAddMany, buttonAddItem, buttonRefresh, buttonSearchSeq, buttonSearchIndex;
     private JTextField txtNbreItem, txtNbreSpecificItem, txtU, txtFile, removeSpecific, txtToSearch;
-    private JOptionPane popUpInfo;
     private final JTree tree = new JTree();
 
     public GUI() {
@@ -44,16 +43,18 @@ public class GUI extends JFrame implements ActionListener {
                 tree.updateUI();
             } else if (e.getSource() == buttonSearchIndex) {
                 long i = System.currentTimeMillis();
-                Personne p = bInt.searchIndex(Integer.parseInt(txtToSearch.getText()),bInt.getRacine());
-                i = System.currentTimeMillis()-i;
-                System.out.println("Personne trouvé  : "+p);
-                System.out.println("Temps d'execution : "+i+" milliseconde(s)");
-            } else if(e.getSource()==buttonSearchSeq){
+                Personne personne = bInt.searchIndex(Integer.parseInt(txtToSearch.getText()), bInt.getRacine());
+                i = System.currentTimeMillis() - i;
+                System.out.println("Personne trouvée : " + personne);
+                System.out.println("Temps d'execution : " + i + " milliseconde(s)");
+                System.out.println("Le niveau de compléxité est de : O(log(" + txtNbreItem.getText() + ")) = " + Math.log(Double.parseDouble(txtNbreItem.getText())));
+            } else if (e.getSource() == buttonSearchSeq) {
                 long i = System.currentTimeMillis();
-                Personne p = bInt.searchSeq(Integer.parseInt(txtToSearch.getText()),bInt.getRacine());
-                i = System.currentTimeMillis()-i;
-                System.out.println("Personne trouvé  : "+p);
-                System.out.println("Temps d'execution : "+i+" milliseconde(s)");
+                Personne personne = bInt.searchSeq(Integer.parseInt(txtToSearch.getText()), bInt.getRacine());
+                i = System.currentTimeMillis() - i;
+                System.out.println("Personne trouvée  : " + personne);
+                System.out.println("Temps d'execution : " + i + " milliseconde(s)");
+                System.out.println("Le niveau de compléxité est de : O(" + txtNbreItem.getText() + ") = " + txtNbreItem.getText());
             }
         } else {
             if (bInt == null)
@@ -139,6 +140,7 @@ public class GUI extends JFrame implements ActionListener {
         c.weightx = 1;
         pane1.add(txtNbreItem, c);
 
+
         buttonAddMany = new JButton("Ajouter n ?l?ments al?atoires ? l'arbre");
         c.gridx = 2;
         c.gridy = 2;
@@ -181,6 +183,7 @@ public class GUI extends JFrame implements ActionListener {
         c.gridwidth = 1;
         pane1.add(removeSpecific, c);
 
+        // WIP
         JLabel labelTxtToSearch = new JLabel("Rechercher:");
         c.gridx = 0;
         c.gridy = 8;
